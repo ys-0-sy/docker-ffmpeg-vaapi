@@ -1,9 +1,5 @@
-FROM centos:7
-MAINTAINER Sho Fuji <pockawoooh@gmail.com>
-
-
-CMD ["--help"]
-ENTRYPOINT ["ffmpeg"]
+FROM debian
+MAINTAINER Yuta Saito <yuta.saito0703@gmail.com>
 
 WORKDIR /work
 
@@ -13,16 +9,16 @@ ENV TARGET_VERSION=4.1.4 \
     SRC=/usr \
     PKG_CONFIG_PATH=/usr/lib/pkgconfig
 
-RUN yum install -y --enablerepo=extras epel-release yum-utils && \
+RUN apt update && \
     # Install libdrm
-    yum install -y libdrm libdrm-devel && \
+    apt install -y libdrm2 libdrm-dev && \
     # Install build dependencies
     build_deps="automake autoconf bzip2 \
-                cmake freetype-devel gcc \
-                gcc-c++ git libtool make \
-                mercurial nasm pkgconfig \
-                yasm zlib-devel" && \
-    yum install -y ${build_deps} && \
+                cmake curl libfreetype6-dev gcc \
+                g++ git libtool make \
+                mercurial nasm build-essential \
+                pkg-config yasm zlib1g-dev" && \
+    apt install -y ${build_deps} && \
     # Build libva
     DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL https://github.com/intel/libva/releases/download/${LIBVA_VERSION}/libva-${LIBVA_VERSION}.tar.bz2 | \
@@ -53,6 +49,10 @@ RUN yum install -y --enablerepo=extras epel-release yum-utils && \
     hash -r && \
     # Cleanup build dependencies and temporary files
     rm -rf ${DIR} && \
-    yum history -y undo last && \
-    yum clean all && \
+    apt -y remove ${build_deps} && \
+    apt autoremove -y && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
     ffmpeg -buildconf
+
+ENTRYPOINT ffmpeg

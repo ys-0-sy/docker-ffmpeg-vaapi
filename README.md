@@ -9,7 +9,7 @@ This repository contains a docker image for FFmpeg with VAAPI.
 Pull the image from DockerHub.
 
 ```sh
-docker pull pocka/ffmpeg-vaapi
+docker pull ys_0_sy/ffmpeg-vaapi
 ```
 
 ## Example

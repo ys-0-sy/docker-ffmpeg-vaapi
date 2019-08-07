@@ -9,16 +9,16 @@ ENV TARGET_VERSION=4.1.4 \
     SRC=/usr \
     PKG_CONFIG_PATH=/usr/lib/pkgconfig
 
-RUN apt update && \
+RUN apt-get update && \
     # Install libdrm
-    apt install -y libdrm2 libdrm-dev && \
+    apt-get install -y libdrm2 libdrm-dev && \
     # Install build dependencies
     build_deps="automake autoconf bzip2 \
                 cmake curl libfreetype6-dev gcc \
                 g++ git libtool make \
                 mercurial nasm build-essential \
                 pkg-config yasm zlib1g-dev" && \
-    apt install -y ${build_deps} && \
+    apt-get install -y ${build_deps} && \
     # Build libva
     DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL https://github.com/intel/libva/releases/download/${LIBVA_VERSION}/libva-${LIBVA_VERSION}.tar.bz2 | \
@@ -49,9 +49,9 @@ RUN apt update && \
     hash -r && \
     # Cleanup build dependencies and temporary files
     rm -rf ${DIR} && \
-    apt -y remove ${build_deps} && \
-    apt autoremove -y && \
-    apt clean && \
+    apt-get -y remove ${build_deps} && \
+    apt-get autoremove -y && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     ffmpeg -buildconf
 
